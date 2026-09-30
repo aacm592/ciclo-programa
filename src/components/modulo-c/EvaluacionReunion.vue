@@ -147,25 +147,25 @@ watch(reunionActivaIndex, (newIndex) => {
 
         <GlassTextarea
           v-model="reunionSeleccionada.programa.evaluacion.cumplePrograma"
-          label="9.1. ¿Se cumple el programa?"
+          label="¿Se cumple el programa?"
           placeholder="Justifica si se lograron completar las actividades planificadas..."
           :rows="2"
         />
         <GlassTextarea
           v-model="reunionSeleccionada.programa.evaluacion.cumpleObjetivo"
-          label="9.2. ¿Se cumple el objetivo de la actividad principal?"
+          label="¿Se cumple el objetivo de la actividad principal?"
           placeholder="Detalla si los jóvenes alcanzaron la meta propuesta..."
           :rows="2"
         />
         <GlassTextarea
           v-model="reunionSeleccionada.programa.evaluacion.contribuyeObjetivos"
-          label="9.3. ¿Se logra contribuir al desarrollo de los objetivos educativos?"
+          label="¿Se logra contribuir al desarrollo de los objetivos educativos?"
           placeholder="Menciona cómo las áreas de crecimiento se vieron reflejadas..."
           :rows="2"
         />
         <GlassTextarea
           v-model="reunionSeleccionada.programa.evaluacion.coherenciaEnfasis"
-          label="9.4. ¿Las actividades guardaron coherencia con el énfasis?"
+          label="¿Las actividades guardaron coherencia con el énfasis?"
           placeholder="Explica la relación entre la reunión y el énfasis del ciclo..."
           :rows="2"
         />

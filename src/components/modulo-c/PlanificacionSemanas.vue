@@ -186,10 +186,10 @@ const recalcularHorarios = (indexActual) => {
           <IconButton action="add" @click="agregarFilaHorario" />
         </div>
 
-        <div class="overflow-x-auto rounded-xl border border-gris-lavanda/20 bg-white/30">
+        <div class="overflow-x-auto rounded-xl border border-gris-lavanda/20 dark:border-white/10 bg-white/30 dark:bg-slate-900/40">
           <table class="w-full text-sm text-left">
             <thead
-              class="text-xs text-morado uppercase bg-white/50 border-b border-gris-lavanda/20"
+              class="text-xs text-morado dark:text-slate-200 uppercase bg-white/50 dark:bg-black/40 border-b border-gris-lavanda/20 dark:border-white/10"
             >
               <tr>
                 <th class="px-3 py-2 w-24">Hora</th>
@@ -201,22 +201,22 @@ const recalcularHorarios = (indexActual) => {
                 <th class="px-3 py-2 w-12"></th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gris-lavanda/10">
+            <tbody class="divide-y divide-gris-lavanda/10 dark:divide-white/10">
               <tr
                 v-for="(fila, index) in reunionSeleccionada.programa.horario"
                 :key="fila.id"
-                class="hover:bg-white/40 transition-colors"
+                class="hover:bg-white/40 dark:hover:bg-white/10 transition-colors"
               >
-                <!-- Hora: editable con cálculo hacia adelante si se altera manualmente -->
+                <!-- Hora -->
                 <td class="p-1">
                   <input
                     v-model="fila.hora"
                     @input="recalcularHorarios(index)"
                     type="time"
-                    class="w-full bg-transparent border-none p-2 text-xs font-semibold text-morado focus:ring-1 focus:ring-jade rounded cursor-pointer"
+                    class="w-full bg-transparent border-none p-2 text-xs font-semibold text-morado dark:text-white focus:ring-1 focus:ring-jade rounded cursor-pointer"
                   />
                 </td>
-                <!-- Duración: ingresada solo como número en minutos -->
+                <!-- Duración -->
                 <td class="p-1">
                   <div class="flex items-center gap-1">
                     <input
@@ -225,76 +225,67 @@ const recalcularHorarios = (indexActual) => {
                       type="number"
                       min="1"
                       placeholder="15"
-                      class="w-16 bg-transparent border-none p-2 text-xs font-semibold focus:ring-1 focus:ring-jade rounded text-right"
+                      class="w-16 bg-transparent border-none p-2 text-xs font-semibold dark:text-white focus:ring-1 focus:ring-jade rounded text-right"
                     />
-                    <span class="text-[11px] text-slate-500 font-medium select-none pr-1">min</span>
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium select-none pr-1">min</span>
                   </div>
                 </td>
+                <!-- Actividad -->
                 <td class="p-1">
                   <input
                     v-model="fila.actividad"
-                    class="w-full bg-transparent border-none p-2 focus:ring-1 focus:ring-jade rounded"
+                    class="w-full bg-transparent border-none p-2 focus:ring-1 focus:ring-jade rounded dark:text-white dark:placeholder:text-slate-400"
                     placeholder="Juego o dinámica..."
                   />
                 </td>
+                <!-- Materiales -->
                 <td class="p-1">
                   <input
                     v-model="fila.materiales"
-                    class="w-full bg-transparent border-none p-2 focus:ring-1 focus:ring-jade rounded"
+                    class="w-full bg-transparent border-none p-2 focus:ring-1 focus:ring-jade rounded dark:text-white dark:placeholder:text-slate-400"
                     placeholder="Balón, cuerdas..."
                   />
                 </td>
+                <!-- Responsables -->
                 <td class="p-1 min-w-[140px]">
-                  <!-- Modo "Otro": Input de texto -->
                   <div v-if="fila.isOtro" class="flex items-center gap-1">
                     <input
                       v-model="fila.responsables"
                       type="text"
-                      class="w-full bg-white border border-jade/50 p-1.5 focus:ring-1 focus:ring-jade rounded text-xs"
+                      class="w-full bg-white dark:bg-black/40 border border-jade/50 dark:border-jade/30 p-1.5 focus:ring-1 focus:ring-jade rounded text-xs dark:text-white"
                       placeholder="Nombre..."
                     />
                     <button
-                      @click="
-                        fila.isOtro = false;
-                        fila.responsables = ''
-                      "
+                      @click="fila.isOtro = false; fila.responsables = ''"
                       class="text-rose-500 hover:text-rose-700 font-bold px-1"
                       title="Volver a la lista"
                     >
                       ✕
                     </button>
                   </div>
-                  <!-- Modo Normal: Combobox -->
                   <select
                     v-else
                     v-model="fila.responsables"
-                    @change="
-                      if ($event.target.value === 'OTRO') {
-                        fila.isOtro = true;
-                        fila.responsables = ''
-                      }
-                    "
-                    class="w-full bg-transparent border-none p-1.5 focus:ring-1 focus:ring-jade rounded text-xs text-slate-700 cursor-pointer"
+                    @change="$event.target.value === 'OTRO' && (fila.isOtro = true, fila.responsables = '')"
+                    class="w-full bg-transparent border-none p-1.5 focus:ring-1 focus:ring-jade rounded text-xs text-slate-700 dark:text-slate-200 cursor-pointer"
                   >
                     <option value="" disabled>Elegir...</option>
-                    <option
-                      v-for="dirigente in store.dirigentes"
-                      :key="dirigente"
-                      :value="dirigente"
-                    >
+                    <option v-for="dirigente in store.dirigentes" :key="dirigente" :value="dirigente">
                       {{ dirigente }}
                     </option>
                     <option value="OTRO" class="font-bold">Otro (escribir)...</option>
                   </select>
                 </td>
+                <!-- Observaciones -->
                 <td class="p-1 align-top">
                   <textarea
                     v-model="fila.observaciones"
-                    class="w-full bg-transparent border-none p-2 focus:ring-1 focus:ring-jade rounded resize-y min-h-[38px] text-xs"
+                    class="w-full bg-transparent border-none p-2 focus:ring-1 focus:ring-jade rounded resize-y min-h-[38px] text-xs dark:text-white dark:placeholder:text-slate-400"
                     placeholder="..."
                     rows="1"
                   ></textarea>
                 </td>
+                <!-- Eliminar -->
                 <td class="p-1 text-center">
                   <button
                     @click="eliminarFilaHorario(fila.id)"
