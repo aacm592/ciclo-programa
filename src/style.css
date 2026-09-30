@@ -1,40 +1,106 @@
-/* Opcional: carga de fuentes (debe ir antes de tailwindcss) */
+/* Fuentes: deben ir antes de tailwindcss */
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Urbanist:wght@600;700;800&display=swap");
 @import "tailwindcss";
 
+/* Permite usar `dark:` en clases Tailwind, basado en <html class="dark"> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ========================================= */
+/* 1. TOKENS DE MARCA                        */
+/* ========================================= */
 @theme {
-  --color-jade: #068F63;
-  --color-morado: #433D95;
-  --color-verde-suave: #C4F7A1;
-  --color-gris-lavanda: #9BA7C0;
+  --color-jade: #068f63;
+  --color-morado: #433d95;
+  --color-verde-suave: #c4f7a1;
+  --color-gris-lavanda: #9ba7c0;
   --font-display: "Urbanist", sans-serif;
   --font-sans: "DM Sans", sans-serif;
 }
 
-/* Panel principal (Tarjetas) */
+/* ========================================= */
+/* 2. TOKENS DE SUPERFICIE (modo claro)      */
+/*    El modo oscuro solo redefine estos     */
+/*    valores (ver sección 6)                */
+/* ========================================= */
+:root {
+  --glass-panel-bg: rgba(255, 255, 255, 0.75);
+  --glass-panel-border: rgba(255, 255, 255, 0.6);
+  --glass-panel-shadow: 0 8px 32px 0 rgba(67, 61, 149, 0.08);
+
+  --glass-input-bg: rgba(255, 255, 255, 0.85);
+  --glass-input-bg-focus: #ffffff;
+  --glass-input-border: rgba(155, 167, 192, 0.4);
+
+  --select-option-bg: #ffffff;
+  --select-option-color: #1e293b;
+  --select-option-disabled: #64748b;
+}
+
+/* ========================================= */
+/* 3. COMPONENTES BASE                       */
+/* ========================================= */
+
+/* Panel principal (tarjetas) */
 @utility glass-panel {
-  background: rgba(255, 255, 255, 0.75);
+  background: var(--glass-panel-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 8px 32px 0 rgba(67, 61, 149, 0.08);
+  border: 1px solid var(--glass-panel-border);
+  box-shadow: var(--glass-panel-shadow);
 }
 
 /* Campos de formulario */
 @utility glass-input {
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(155, 167, 192, 0.4);
-  transition: all 0.3s ease;
+  background: var(--glass-input-bg);
+  border: 1px solid var(--glass-input-border);
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 
   &:focus {
-    background: #FFFFFF;
+    background: var(--glass-input-bg-focus);
     border-color: var(--color-jade);
     box-shadow: 0 0 0 3px rgba(6, 143, 99, 0.15);
     outline: 2px solid transparent;
   }
 }
 
-/* --- IMPRESIÓN Y EXPORTACIÓN PDF --- */
+/* Lista desplegable de los <select> */
+select option {
+  background-color: var(--select-option-bg);
+  color: var(--select-option-color);
+}
+select option:disabled {
+  color: var(--select-option-disabled);
+}
+
+/* ========================================= */
+/* 4. TRANSICIONES ENTRE VISTAS              */
+/* ========================================= */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.25s ease-out;
+}
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-slide-enter-active,
+  .fade-slide-leave-active {
+    transition: none;
+  }
+}
+
+/* ========================================= */
+/* 5. IMPRESIÓN Y EXPORTACIÓN PDF            */
+/* ========================================= */
 @page {
   size: letter portrait;
   margin: 10mm;
@@ -46,7 +112,8 @@
     print-color-adjust: exact;
   }
 
-  body, html {
+  body,
+  html {
     background: #ffffff !important;
     color: #000000 !important;
     height: auto !important;
@@ -70,96 +137,92 @@
 
   .page-break {
     break-after: page !important;
-    page-break-after: always !important;
+    page-break-after: always !important; /* compatibilidad con navegadores antiguos */
     height: 0;
     display: block;
   }
 }
 
+/* ========================================= */
+/* 6. SOLO PANTALLA (+ MODO OSCURO)          */
+/*    Va dentro de @media screen para que el */
+/*    PDF siempre salga en claro             */
+/* ========================================= */
 @media screen {
   html {
-    font-size: 110%; 
+    font-size: 110%;
   }
-  
+
   .print-only {
     display: none !important;
   }
 
-  /* ========================================= */
-  /* MODO OSCURO GLOBAL (Hack Automático)      */
-  /* ========================================= */
-  html.dark .glass-panel {
-    background: rgba(20, 18, 40, 0.65); 
-    border-color: rgba(155, 167, 192, 0.15);
-    color: #f8fafc;
+  :root.dark {
+    /* Solo se redefinen los tokens: los componentes no cambian */
+    --glass-panel-bg: rgba(20, 18, 40, 0.65);
+    --glass-panel-border: rgba(155, 167, 192, 0.15);
+
+    --glass-input-bg: rgba(15, 23, 42, 0.4);
+    --glass-input-bg-focus: rgba(15, 23, 42, 0.6);
+    --glass-input-border: rgba(255, 255, 255, 0.15);
+
+    --select-option-bg: #0f172a;
+    --select-option-color: #f1f5f9;
+    --select-option-disabled: #94a3b8;
+
+    & .glass-panel {
+      color: #f8fafc;
+    }
+
+    & .glass-input {
+      color: #ffffff;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+      }
+    }
+
+    /* ----------------------------------------------------------- */
+    /* LEGACY: sobrescribe utilidades Tailwind con !important.      */
+    /* Se puede eliminar a medida que los componentes usen `dark:`  */
+    /* (ej. `text-slate-800 dark:text-slate-100`).                  */
+    /* ----------------------------------------------------------- */
+
+    /* Textos */
+    & .text-morado {
+      color: #ffffff !important;
+    }
+    & :is(.text-slate-800, .text-slate-700) {
+      color: #f1f5f9 !important;
+    }
+    & .text-slate-500 {
+      color: #94a3b8 !important;
+    }
+
+    /* Fondos */
+    & :is(
+        .bg-white\/40,
+        .bg-white\/50,
+        .bg-white\/60,
+        .bg-white\/70,
+        .bg-gray-100,
+        .bg-gray-200
+      ) {
+      background-color: rgba(0, 0, 0, 0.3) !important;
+    }
+    & .bg-white {
+      background-color: rgba(15, 23, 42, 0.5) !important;
+    }
+
+    /* Bordes */
+    & :is(.border-gris-lavanda\/20, .border-gris-lavanda\/30, .border-white\/60) {
+      border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    /* Dropdown de responsables */
+    & .dropdown-responsables {
+      background-color: rgba(15, 23, 42, 0.97) !important;
+      border-color: rgba(255, 255, 255, 0.15) !important;
+    }
   }
-  
-  html.dark .glass-input {
-    background: rgba(15, 23, 42, 0.4);
-    border-color: rgba(255, 255, 255, 0.15);
-    color: #ffffff;
-  }
-  
-  html.dark .glass-input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
-  }
-
-  /* Secuestro de textos claros a oscuros */
-  html.dark .text-morado { color: #ffffff !important; }
-  html.dark .text-slate-800, 
-  html.dark .text-slate-700 { color: #f1f5f9 !important; }
-  html.dark .text-slate-500 { color: #94a3b8 !important; }
-
-  /* Secuestro de fondos semitransparentes */
-  html.dark .bg-white\/40, 
-  html.dark .bg-white\/50, 
-  html.dark .bg-white\/60,
-  html.dark .bg-white\/70,
-  html.dark .bg-gray-100,
-  html.dark .bg-gray-200 { background-color: rgba(0, 0, 0, 0.3) !important; }
-  
-  html.dark .bg-white { background-color: rgba(15, 23, 42, 0.5) !important; }
-  
-  /* Secuestro de bordes */
-  html.dark .border-gris-lavanda\/20,
-  html.dark .border-gris-lavanda\/30,
-  html.dark .border-white\/60 { border-color: rgba(255, 255, 255, 0.1) !important; }
-
-    html.dark .dropdown-responsables {
-    background-color: rgba(15, 23, 42, 0.97) !important;
-    border-color: rgba(255, 255, 255, 0.15) !important;
-  }
-
-  html.dark select option {
-    background-color: #0f172a;
-    color: #f1f5f9;
-  }
-  html.dark select option:disabled {
-    color: #94a3b8;
-  }
-}
-
-/* --- TRANSICIONES ENTRE VISTAS --- */
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: all 0.25s ease-out;
-}
-
-.fade-slide-enter-from {
-  opacity: 0;
-  transform: translateY(10px);
-}
-
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-
-/* Lista desplegable de los <select> */
-select option {
-  background-color: #ffffff;
-  color: #1e293b;
-}
-select option:disabled {
-  color: #64748b;
 }
