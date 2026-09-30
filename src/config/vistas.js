@@ -36,12 +36,23 @@ export const vistas = {
     title: 'Módulo C.2: Evaluación de Reunión',
     subtitle: 'Revisión de objetivos y cumplimiento',
     acciones: [
+      { label: 'Atrás', variant: 'ghost', run: ({ store }) => (store.vistaActual = 'moduloB') },
       {
-        label: 'Volver al Menú',
-        variant: 'ghost',
-        run: ({ store }) => (store.vistaActual = 'landing')
-      },
-      exportar
+        label: 'Exportar',
+        variant: 'primary',
+        dropdown: true, // Esto le dice a App.vue que dibuje el menú
+        opciones: [
+          {
+            label: 'Como PDF',
+            run: ({ exportarPDF }) => exportarPDF()
+          },
+          {
+            label: 'Como Excel',
+            colorClass: 'text-jade dark:text-jade',
+            run: ({ store, exportarExcel }) => exportarExcel(store)
+          }
+        ]
+      }
     ]
   },
 
@@ -81,7 +92,22 @@ export const vistas = {
     subtitle: 'Diseño del programa para cada sábado',
     acciones: [
       { label: 'Atrás', variant: 'ghost', run: ({ store }) => (store.vistaActual = 'moduloB') },
-      exportar
+      {
+        label: 'Exportar',
+        variant: 'primary',
+        dropdown: true, // Esto le dice a App.vue que dibuje el menú
+        opciones: [
+          {
+            label: 'Como PDF',
+            run: ({ exportarPDF }) => exportarPDF()
+          },
+          {
+            label: 'Como Excel',
+            colorClass: 'text-jade dark:text-jade',
+            run: ({ store, exportarExcel }) => exportarExcel(store)
+          }
+        ]
+      }
     ]
   }
 }
