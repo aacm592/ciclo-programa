@@ -255,7 +255,7 @@ const recalcularHorarios = (indexActual) => {
                     />
                     <button
                       @click="
-                        fila.isOtro = false
+                        fila.isOtro = false;
                         fila.responsables = ''
                       "
                       class="text-rose-500 hover:text-rose-700 font-bold px-1"
@@ -270,7 +270,7 @@ const recalcularHorarios = (indexActual) => {
                     v-model="fila.responsables"
                     @change="
                       if ($event.target.value === 'OTRO') {
-                        fila.isOtro = true
+                        fila.isOtro = true;
                         fila.responsables = ''
                       }
                     "
@@ -337,7 +337,7 @@ const recalcularHorarios = (indexActual) => {
                 <select
                   v-model="obj.area"
                   @change="
-                    obj.media = ''
+                    obj.media = '';
                     obj.tardia = ''
                   "
                   class="w-full glass-input rounded-xl px-3 py-2 pr-8 text-slate-800 font-sans text-sm outline-none focus:ring-2 focus:ring-jade/30 transition-all cursor-pointer appearance-none bg-white/70"

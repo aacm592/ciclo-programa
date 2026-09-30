@@ -1,161 +1,68 @@
 <script setup>
+import { computed } from 'vue'
 import { useCicloStore } from './stores/cicloStore'
+import { useTheme } from './composables/useTheme'
+import { useExportarPDF } from './composables/useExportarPDF'
+import { vistas } from './config/vistas'
 import GlassCard from './components/common/GlassCard.vue'
 import GlassButton from './components/common/GlassButton.vue'
-import EncabezadoForm from './components/modulo-a/EncabezadoForm.vue'
-import DiagnosticoEnfasis from './components/modulo-a/DiagnosticoEnfasis.vue'
-import SeleccionActividades from './components/modulo-a/SeleccionActividades.vue'
-import CronogramaGrid from './components/modulo-b/CronogramaGrid.vue'
-import PlanificacionSemanas from './components/modulo-c/PlanificacionSemanas.vue'
-import { ref, onMounted, watch } from 'vue'
-import VistaImpresion from './components/visualizacion/VistaImpresion.vue'
-import LandingMenu from './components/LandingMenu.vue'
-import ListaDirigentes from './components/configuracion/ListaDirigentes.vue'
-import EvaluacionReunion from './components/modulo-c/EvaluacionReunion.vue'
 import AppNavbar from './components/AppNavbar.vue'
+import VistaImpresion from './components/visualizacion/VistaImpresion.vue'
 
 const store = useCicloStore()
+const { isDarkMode, toggleTheme } = useTheme()
+const exportarPDF = useExportarPDF()
 
-const isDarkMode = ref(false)
+const vista = computed(() => vistas[store.vistaActual] ?? vistas.landing)
+const propsVista = computed(() => (vista.value.pasaTema ? { isDarkMode: isDarkMode.value } : {}))
 
-onMounted(() => {
-  isDarkMode.value = localStorage.getItem('theme') === 'dark'
-  if (isDarkMode.value) document.documentElement.classList.add('dark')
-})
+const fondo = computed(() =>
+  isDarkMode.value
+    ? { backgroundImage: 'url(./bg-landing.jpeg)' }
+    : { backgroundColor: '#f8fafc', backgroundImage: 'url(./bg-light.jpeg)' },
+)
 
-watch(isDarkMode, (dark) => {
-  if (dark) {
-    document.documentElement.classList.add('dark')
-    localStorage.setItem('theme', 'dark')
-  } else {
-    document.documentElement.classList.remove('dark')
-    localStorage.setItem('theme', 'light')
-  }
-})
-
-const exportarPDF = () => {
-  if (store.cronograma.length === 0) {
-    alert('Primero debes generar el cronograma en el Módulo B antes de exportar el documento.')
-    return
-  }
-  window.print()
-}
+const ejecutar = (accion) => accion.run({ store, exportarPDF })
 </script>
 
 <template>
   <div
     class="no-print min-h-screen bg-cover bg-center bg-fixed transition-colors duration-500 p-6 md:p-10"
-    :style="
-      isDarkMode
-        ? { backgroundImage: 'url(./bg-landing.jpeg)' }
-        : { backgroundColor: '#f8fafc', backgroundImage: 'url(./bg-light.jpeg)' }
-    "
+    :style="fondo"
   >
     <div class="max-w-6xl mx-auto space-y-8">
-      <!-- Cabecera de la Aplicación -->
-      <!-- NAVBAR EXTERNALIZADO -->
-      <AppNavbar :is-dark-mode="isDarkMode" @toggle-theme="isDarkMode = !isDarkMode" />
+      <AppNavbar :is-dark-mode="isDarkMode" @toggle-theme="toggleTheme" />
 
-      <!-- CONTENEDOR CON TRANSICIÓN SUAVE -->
       <transition name="fade-slide" mode="out-in">
         <div :key="store.vistaActual">
-          <!-- VISTA: LANDING PAGE -->
-          <LandingMenu v-if="store.vistaActual === 'landing'" :is-dark-mode="isDarkMode" />
-
-          <!-- VISTA: DIRIGENTES -->
-          <div v-else-if="store.vistaActual === 'dirigentes'" class="max-w-2xl mx-auto">
-            <ListaDirigentes />
-          </div>
-
-          <!-- VISTA: EVALUACIÓN -->
-          <GlassCard
-            v-else-if="store.vistaActual === 'evaluacion'"
-            title="Módulo C.2: Evaluación de Reunión"
-            subtitle="Revisión de objetivos y cumplimiento"
-          >
+          <GlassCard v-if="vista.card" :title="vista.title" :subtitle="vista.subtitle">
             <div class="mt-6">
-              <EvaluacionReunion />
-            </div>
-            <template #header-actions>
-              <div class="flex gap-3">
-                <GlassButton variant="ghost" @click="store.vistaActual = 'landing'"
-                  >Volver al Menú</GlassButton
-                >
-                <GlassButton variant="primary" @click="exportarPDF"
-                  >Exportar / Imprimir PDF</GlassButton
-                >
-              </div>
-            </template>
-          </GlassCard>
-
-          <!-- VISTA: MÓDULO A -->
-          <GlassCard
-            v-else-if="store.vistaActual === 'moduloA'"
-            title="Módulo A: Planificación del Ciclo"
-            subtitle="Definición de objetivos y actividades"
-          >
-            <div class="space-y-10 mt-6">
-              <section><EncabezadoForm /></section>
-              <hr class="border-gris-lavanda/20" />
-              <section><DiagnosticoEnfasis /></section>
-              <hr class="border-gris-lavanda/20" />
-              <section><SeleccionActividades /></section>
-            </div>
-
-            <template #header-actions>
-              <GlassButton variant="primary" @click="store.generarSemanas">
-                Siguiente: Cronograma
-              </GlassButton>
-            </template>
-          </GlassCard>
-
-          <!-- VISTA: MÓDULO B -->
-          <GlassCard
-            v-else-if="store.vistaActual === 'moduloB'"
-            title="Módulo B: Cronograma de Actividades"
-            subtitle="Planificación de reuniones sabatinas"
-          >
-            <div class="mt-6">
-              <CronogramaGrid />
+              <component :is="vista.component" />
             </div>
 
             <template #header-actions>
               <div class="flex gap-3">
-                <GlassButton variant="ghost" @click="store.volverModuloA">Atrás</GlassButton>
-                <GlassButton variant="primary" @click="store.irAModuloC"
-                  >Siguiente: Planificar Sábados</GlassButton
+                <GlassButton
+                  v-for="accion in vista.acciones"
+                  :key="accion.label"
+                  :variant="accion.variant"
+                  @click="ejecutar(accion)"
                 >
-              </div>
-            </template>
-          </GlassCard>
-
-          <!-- VISTA: MÓDULO C (PROGRAMAS) -->
-          <GlassCard
-            v-else-if="store.vistaActual === 'moduloC'"
-            title="Módulo C: Planificación Semanal"
-            subtitle="Diseño del programa para cada sábado"
-          >
-            <div class="mt-6">
-              <PlanificacionSemanas />
-            </div>
-
-            <template #header-actions>
-              <div class="flex gap-3">
-                <GlassButton variant="ghost" @click="store.vistaActual = 'moduloB'"
-                  >Atrás</GlassButton
-                >
-                <GlassButton variant="primary" @click="exportarPDF">
-                  Exportar / Imprimir PDF
+                  {{ accion.label }}
                 </GlassButton>
               </div>
             </template>
           </GlassCard>
+
+          <div v-else :class="vista.wrapperClass">
+            <component :is="vista.component" v-bind="propsVista" />
+          </div>
         </div>
       </transition>
     </div>
   </div>
 
-  <!-- Vista que solo se procesa para el PDF -->
+  <!-- Solo se procesa para el PDF -->
   <div class="print-only">
     <VistaImpresion />
   </div>
