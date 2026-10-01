@@ -10,64 +10,226 @@ export const areasCrecimiento = [
 export const objetivosPorArea = {
   Corporalidad: {
     media: [
-      'Participo en actividades que ayudan a mantener mi cuerpo fuerte y sano.', //[cite: 9]
-      'Me doy cuenta de los cambios que se están produciendo en mi cuerpo.', //[cite: 9]
-      'Sé lo que puedo y no puedo hacer con mi cuerpo. Trato de evitar situaciones que puedan dañar mi salud...' //[cite: 9]
+      'Participo en actividades que ayudan a mantener mi cuerpo fuerte y sano.',
+      'Me doy cuenta de los cambios que se están produciendo en mi cuerpo.',
+      'Se lo que puedo y no puedo hacer con mi cuerpo.',
+      'Trato de evitar situaciones que puedan dañar mi salud y la de mis compañeros.',
+      'Trato de no ser agresivo en juegos y otras actividades.',
+      'Me preocupo por mi aspecto personal y porque mi cuerpo este limpio.',
+      'Ayudo en ordenar y limpiar mi casa y los lugares en que estudio y juego.',
+      'Como los alimentos que me ayudan a crecer y lo hago a las horas adecuadas.',
+      'Le dedico al estudio el tiempo necesario.',
+      'Me gusta participar en distintas actividades recreativas.',
+      'Participo en los juegos, excursiones y campamentos que organiza mi tropa.',
+      'Practico regularmente un deporte.',
+      'Conozco y practico diferentes juegos y respeto sus reglas.'
     ],
     tardia: [
-      'Respeto mi cuerpo y el de los demás.', //[cite: 9]
-      'Comprendo que los cambios que se están produciendo en mi cuerpo influyen en mi manera de ser.', //[cite: 9]
-      'Sé qué hacer frente a una enfermedad o accidente. Trato de superar las dificultades físicas...' //[cite: 9]
+      'Respeto mi cuerpo y el de los demás.',
+      'Comprendo que los cambios que se están produciendo en mi cuerpo influyen en mi manera de ser.',
+      'Sé qué hacer frente a una enfermedad o accidente.',
+      'Trato de superar las dificultades físicas propias de mi crecimiento.',
+      'Converso con mis compañeros para resolver los problemas que se producen entre nosotros.',
+      'Me preocupo por mi aspecto personal y siempre trato de estar limpio y ordenado.',
+      'Mantengo limpios y ordenados mi hogar, dormitorio y mis cosas.',
+      'Cuido, limpio y ordeno los lugares en que acampo.',
+      'Sé qué alimentos me ayudan a crecer y cuáles no.',
+      'Organizo bien mi tiempo para estudiar, compartir con mi familia y estar con mis amigos.',
+      'Sé preparar comidas sencillas y lo hago con orden y limpieza.',
+      'Sé elegir entre las diferentes actividades recreativas.',
+      'Ayudo a preparar los juegos, excursiones y campamentos de mi patrulla y mi Tropa.',
+      'Me esfuerzo por mejorar mi rendimiento en el deporte que practico y sé ganar y perder.',
+      'Preparo juegos para distintas ocasiones, los explico y practico.'
     ]
   },
   Creatividad: {
     media: [
-      'Aprendo cosas nuevas además de las que me enseñan en la escuela.', //[cite: 9]
-      'Me intereso por conocer más de lo que pasa a mi alrededor.' //[cite: 9]
+      'Aprendo cosas nuevas además de las que me enseñan en la escuela.',
+      'Me intereso por conocer más de lo que pasa a mi alrededor.',
+      'Busco mis propias lecturas y puedo relacionarlas con las cosas que me pasan.',
+      'Doy mi opinión sobre las cosas que me pasan.',
+      'Ayudo en la preparación de los temas que discutimos en mi patrulla y tropa.',
+      'Participo en la organización de las excursiones de mi Unidad.',
+      'Perfecciono mis actividades manuales.',
+      'Conozco y uso algunas técnicas de campismo y pionerismos.',
+      'Elijo y completo una especialidad.',
+      'Uso las especialidades que he adquirido para resolver problemas cotidianos.',
+      'Participo con entusiasmo en las actividades artísticas que hace mi Unidad.',
+      'Expreso mis pensamientos y experiencias en el Libro de Oro de la patrulla y tropa.',
+      'Conozco diferentes técnicas de comunicación y sé utilizar alguna de ellas.',
+      'Puedo identificar las principales partes de un problema.'
     ],
     tardia: [
-      'Me preocupo por saber más sobre los temas que me interesan.', //[cite: 9]
-      'Saco mis propias conclusiones de los hechos que pasan a mi alrededor.' //[cite: 9]
+      'Me preocupo por saber más sobre los temas que me interesan.',
+      'Saco mis propias conclusiones de los hechos que pasan a mi alrededor.',
+      'Me intereso en leer sobre diferentes temas.',
+      'Puedo analizar una situación desde distintos puntos de vista.',
+      'Propongo temas para discutir en mi patrulla.',
+      'Organizo actividades novedosas para realizar con mi patrulla y/o Tropa.',
+      'Coopero con el mantenimiento y renovación del Rincón y los materiales de la patrulla.',
+      'Participo en el diseño e instalación de construcciones del campamento.',
+      'Perfecciono mis conocimientos en las especialidades que he elegido.',
+      'Aplico mis especialidades en las actividades de servicio de mi Tropa.',
+      'Expreso por distintos medios mis intereses y aptitudes artísticas.',
+      'Ayudo a preparar materiales para las representaciones artísticas.',
+      'Me gusta cantar y conozco muchas canciones.',
+      'Conozco cómo funcionan los servicios que uso habitual como teléfono, electricidad, radio, televisión y otros.',
+      'He participado en un proyecto que presenta una solución novedosa a un problema técnico habitual.'
     ]
   },
   Carácter: {
     media: [
-      'Me gusta participar en actividades que ayudan a conocerme.', //[cite: 9]
-      'Escucho las críticas que me hacen los demás y reflexiono sobre ellas.' //[cite: 9]
+      'Me gusta participar en actividades que ayudan a conocerme.',
+      'Escucho las críticas que me hacen los demás y reflexiono sobre ellas.',
+      'Sé que puedo ser cada día mejor.',
+      'Me propongo metas para ser mejor.',
+      'Hago cosas que me ayudan a cumplir mis metas.',
+      'Me ofrezco para ayudar en mi patrulla, tropa y casa.',
+      'Conozco y comprendo la Ley y la Promesa Scout.',
+      'Sé lo que significa ser leal.',
+      'He prometido esforzarme por vivir la Ley y la Promesa Scout.',
+      'Trato de ser leal con lo que creo, conmigo mismo y con los demás.',
+      'Participo en actividades que muestran la importancia de actuar con lealtad.',
+      'Enfrento y resuelvo mis dificultades con alegría.',
+      'Contribuyo al ambiente de alegría de mi Tropa.',
+      'Expreso mi alegría sin burlarme de los demás.',
+      'Aprecio los consejos que me dan en mi patrulla.',
+      'Respeto las decisiones tomadas en mi patrulla, aun cuando piense distinto.'
     ],
     tardia: [
-      'Pienso sobre mi manera de ser y trato cada día de mejorar.', //[cite: 9]
-      'Soy capaz de criticarme. Sé que soy capaz de hacer cosas y de hacerlas bien.' //[cite: 9]
+      'Pienso sobre mi manera de ser y trato cada día de mejorar.',
+      'Soy capaz de criticarme.',
+      'Sé que soy capaz de hacer cosas y de hacerlas bien.',
+      'Me esfuerzo cada vez más en superar mis defectos.',
+      'Soy constante en mis propósitos.',
+      'Cumplo las responsabilidades que asumo.',
+      'Comprendo que lo que me piden la Ley y la Promesa Scout es importante para mi vida.',
+      'Me esfuerzo por vivir la Ley y la Promesa Scout.',
+      'Entiendo que es importante actuar de acuerdo a lo que pienso.',
+      'Me esfuerzo por hacer las cosas según lo que pienso.',
+      'Contribuyo para que en mi patrulla nos comprometamos con lo que creemos.',
+      'Soy alegre.',
+      'Ayudo a que en mi Tropa seamos alegres sin ofender a los demás.',
+      'Comparto mi alegría con mis amigos y mi familia.',
+      'Ayudo a mis compañeros de patrulla a superarse.',
+      'Opino y asumo responsabilidades en el Consejo de Patrulla.'
     ]
   },
   Afectividad: {
     media: [
-      'Me doy cuenta y puedo hablar de las cosas que me atemorizan.', //[cite: 9]
-      'Me doy cuenta por qué reacciono de la manera en que a veces lo hago.' //[cite: 9]
+      'Me doy cuenta y puedo hablar de las cosas que me atemorizan.',
+      'Me doy cuenta por qué reacciono de la manera en que a veces lo hago.',
+      'Busco apoyo en mi patrulla cuando estoy triste o algo me confunde.',
+      'Escucho las opiniones de los demás y digo lo que pienso con respeto.',
+      'Soy capaz de decir que no cuando creo que algo es incorrecto.',
+      'Me gusta querer y que me quieran.',
+      'Soy leal con mis amigos sin hostilidad con quienes no lo son.',
+      'Me intereso por los demás y soy generosa.',
+      'Me informo adecuadamente sobre temas sexuales.',
+      'Entiendo que la sexualidad es una forma de expresar amor.',
+      'Comparto por igual con mis hermanas y hermanos las tareas que nos piden en casa.',
+      'Me gusta hacer cosas con mi familia y ayudo en lo que me piden para organizarlas.',
+      'Le cuento a mi familia y entorno social lo que hacemos en los scouts y trato que ellos participen en las actividades a las que son invitados.'
     ],
     tardia: [
-      'Trato de dominar mis reacciones, aun en situaciones difíciles o inesperadas.', //[cite: 9]
-      'Sé que es normal que a veces prefiera la soledad, o no me atreva a hacer algo...' //[cite: 9]
+      'Trato de dominar mis reacciones, aun en situaciones difíciles o inesperadas.',
+      'Sé que es normal que a veces prefiera la soledad, o no me atreva a hacer algo, o sienta inseguridad o rabia, y trato de manejar estos sentimientos.',
+      'Comparto mis sentimientos y emociones con mi patrulla.',
+      'Soy sincero y digo lo que pienso con respeto hacia los demás.',
+      'Mantengo mi opinión cuando estoy convencido que es correcta.',
+      'Aprecio a mis amigos y amigas y no me enojo con ellos por cualquier cosa.',
+      'Entiendo la importancia del amor en mi vida.',
+      'Estoy siempre dispuesto a ayudar a mis compañeros de patrulla.',
+      'Aprecio a las personas por lo que son.',
+      'Comparto con los demás sin vergüenza ni burla, lo que sé sobre la sexualidad del hombre y de la mujer.',
+      'Entiendo que la sexualidad es una forma de expresar el amor y me preparo para vivirla de esa manera.',
+      'Considero con igual dignidad a hombres y mujeres.',
+      'Soy cariñoso con mi familia y acepto las decisiones que se toman en mi casa.',
+      'Converso con mis padres sobre lo que consideran bueno para mí y mis hermanos y hermanas.',
+      'Estoy siempre dispuesto a ayudar a mis hermanos.'
     ]
   },
   Sociabilidad: {
     media: [
-      'Cumplo los compromisos que asumo.', //[cite: 9]
-      'Converso con mi patrulla sobre los derechos humanos.' //[cite: 9]
+      'Procuro que respetemos a nuestros compañeros cualquiera sea su forma de ser.',
+      'Cumplo los compromisos que asumo.',
+      'Converso con mi patrulla sobre los derechos humanos.',
+      'Entiendo cuáles son mis responsabilidades cuando tengo un cargo.',
+      'Participo en las elecciones de mi patrulla y coopero con los que son elegidos.',
+      'Trabajo con los demás para lograr las metas que nos hemos propuesto.',
+      'Digo mi opinión cuando establecemos normas en mi patrulla, entre mis amigos o en mi escuela.',
+      'Conozco y respeto las principales normas de convivencia y urbanidad.',
+      'Sé qué hacen los bomberos, la policía, los hospitales, el municipio y los otros servicios públicos de mi comunidad.',
+      'Trato de realizar una buena acción todos los días.',
+      'Participo en las actividades de servicio que organiza mi Tropa.',
+      'Conozco las distintas realidades sociales del lugar en que vivo.',
+      'Conozco las principales expresiones propias de la cultura de mi país.',
+      'Me gusta sentirme parte de la cultura de mi país.',
+      'Participo en las actividades que muestran la cultura de mi país.',
+      'Conozco los principales símbolos del Movimiento Scout.',
+      'Participo en actividades distritales o nacionales.',
+      'Conozco las principales culturas originarias de América.',
+      'Participo en actividades y talleres en que aprendo la importancia de la comprensión internacional y la paz.',
+      'Conozco los diferentes ecosistemas de mi país.',
+      'Ayudo en la limpieza y el mejoramiento de los lugares en que paseo y acampo.',
+      'He participado con mi patrulla o tropa en alguna actividad sobre la naturaleza y su conservación.'
     ],
     tardia: [
-      'Respeto a todas las personas, independientemente de sus ideas, su clase social y su forma de vida.', //[cite: 9]
-      'Ayudo a mi patrulla en los compromisos que tomamos.' //[cite: 9]
+      'Respeto a todas las personas, independientemente de sus ideas, su clase social y su forma de vida.',
+      'Ayudo a mi patrulla en los compromisos que tomamos.',
+      'Participo en actividades relacionadas con los derechos de las personas.',
+      'No me gusta cuando no se respeta los derechos humanos y lo digo.',
+      'Sé cómo se toman las decisiones en mi país y quiénes intervienen en ellas.',
+      'Considero las opiniones de los demás cuando tengo que tomar decisiones que los afectan.',
+      'Opino con respeto sobre las personas que ejercen autoridad.',
+      'Respeto las normas de convivencia de los distintos ambientes en que actúo, aunque no siempre esté de acuerdo con ellas.',
+      'Opino sobre lo que me gusta o no de las normas de los distintos ambientes en los que actúo.',
+      'Mantengo mi agenda de direcciones útiles.',
+      'Realizo una buena acción cada día.',
+      'Propongo actividades de servicio de mi patrulla y Tropa y colaboro en su organización.',
+      'Me gusta participar en actividades que ayudan a superar las diferencias sociales.',
+      'Conozco los diferentes pensamientos y posiciones políticas que hay en mi país.',
+      'Conozco la geografía de mi país y su influencia con nuestra cultura.',
+      'Aprecio la cultura de mi país y me identifico con ella.',
+      'Propongo en mi patrulla y Tropa, actividades que muestren los valores propios de la cultura de nuestro país.',
+      'Conozco el Movimiento Scout de mi país.',
+      'Participo en los contactos que mantiene mi Grupo con scouts de otros países.',
+      'Me gusta saber cómo viven las personas en otros países.',
+      'Sé cuáles son los principales problemas ambientales de mi país.',
+      'Me intereso en conocer en detalle una cultura originaria de América.',
+      'Aplico técnicas que me permiten mejorar el medio ambiente y no dañar los lugares en que acampo.',
+      'Participo con mi patrulla o Tropa en proyectos de conservación.'
     ]
   },
   Espiritualidad: {
     media: [
-      'Conozco el Movimiento Scout de mi país.', //[cite: 9]
-      'Reflexiono con mi patrulla cuando hacemos excursiones o campamentos.' //[cite: 9]
+      'Reflexiono con mi patrulla cuando hacemos excursiones o campamentos.',
+      'Escucho a los demás y aprendo de ellos.',
+      'Conozco los fundamentos de mi fe.',
+      'Soy constante en los compromisos que he asumido con mi religión.',
+      'Asumo tareas en las celebraciones religiosas que hacemos en mi tropa.',
+      'Me gusta rezar y trato de hacerlo todos los días.',
+      'Siempre encuentro en lo que hago, razones para pedir y dar gracias a Dios.',
+      'Rezo habitualmente con mi patrulla.',
+      'Trato de vivir las enseñanzas de mi fe en todo lo que hago.',
+      'Entiendo por qué mi religión me pide que ayude a los demás.',
+      'Sé cuáles son las principales religiones que hay en mi país.',
+      'Comparto con todas las personas, sean o no sean de mi religión.'
     ],
     tardia: [
-      'Participo en los contactos que mantiene mi Grupo con scouts de otros países.', //[cite: 9]
-      'Sé cuáles son los principales problemas ambientales de mi país.' //[cite: 9]
+      'Preparo y conduzco suficientes actividades que nos ayudan a descubrir a Dios en la naturaleza.',
+      'Procuro que en mi patrulla nos escuchemos y aprendamos unos de otros.',
+      'Leo los libros sagrados de mi fe y converso con adultos que me ayudan a conocerla mejor.',
+      'Participo en las celebraciones y actividades de mi religión.',
+      'Comparto con mi familia reflexiones de los textos sagrados de mi fe.',
+      'Entiendo la oración como una manera de conversar con Dios.',
+      'Rezo para conversar con Dios y alabarlo, darle gracias, ofrecerle lo que hago y pedirle por las cosas que me pasan.',
+      'Me siento feliz cuando los demás ven en mí a una persona que vive de acuerdo a su fe.',
+      'Organizo y comparto momentos de oración con mi patrulla y mi familia.',
+      'Invito a mi patrulla a cooperar con las acciones que nuestra religión hace por los demás.',
+      'Me interesa conocer otras religiones.',
+      'Actúo con respeto frente a las ideas, celebraciones y actividades de otras religiones.',
+      'Trato que en mi patrulla se respeten las opciones religiosas de las personas.'
     ]
   }
 }
