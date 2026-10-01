@@ -106,11 +106,11 @@ const mesesAgrupados = computed(() => {
             :key="sabado.fecha"
             class="border-b border-gray-300 p-2 last:border-0 h-24 overflow-hidden"
           >
-            <div :class="sabado.cancelado ? 'line-through text-gray-500' : ''">
+            <div :class="sabado.cancelado ? 'text-gray-500' : ''">
               <span class="font-bold text-xs">{{ sabado.fecha }}</span
               ><br />
               <span v-if="sabado.cancelado" class="text-xs italic"
-                >Cancelado: {{ sabado.motivoCancelacion }}</span
+                >{{ sabado.motivoCancelacion }}</span
               >
               <span v-else class="text-xs">{{ sabado.actividad }}</span>
             </div>
@@ -205,7 +205,7 @@ const mesesAgrupados = computed(() => {
           <tbody>
             <tr>
               <td class="border border-black p-1.5 font-bold w-1/2">
-                9.1. ¿SE CUMPLE EL PROGRAMA?
+                ¿SE CUMPLE EL PROGRAMA?
               </td>
               <td class="border border-black p-1.5">
                 {{ reunion.programa?.evaluacion?.cumplePrograma || 'Sin evaluar' }}
@@ -213,7 +213,7 @@ const mesesAgrupados = computed(() => {
             </tr>
             <tr>
               <td class="border border-black p-1.5 font-bold">
-                9.2. ¿SE CUMPLE EL OBJETIVO DE LA ACTIVIDAD PRINCIPAL?
+                ¿SE CUMPLE EL OBJETIVO DE LA ACTIVIDAD PRINCIPAL?
               </td>
               <td class="border border-black p-1.5">
                 {{ reunion.programa?.evaluacion?.cumpleObjetivo || 'Sin evaluar' }}
@@ -221,7 +221,7 @@ const mesesAgrupados = computed(() => {
             </tr>
             <tr>
               <td class="border border-black p-1.5 font-bold">
-                9.3. ¿SE LOGRA CONTRIBUIR AL DESARROLLO DE LOS OBJETIVOS EDUCATIVOS?
+                ¿SE LOGRA CONTRIBUIR AL DESARROLLO DE LOS OBJETIVOS EDUCATIVOS?
               </td>
               <td class="border border-black p-1.5">
                 {{ reunion.programa?.evaluacion?.contribuyeObjetivos || 'Sin evaluar' }}
@@ -229,7 +229,7 @@ const mesesAgrupados = computed(() => {
             </tr>
             <tr>
               <td class="border border-black p-1.5 font-bold">
-                9.4. ¿LAS ACTIVIDADES GUARDARON COHERENCIA CON EL ÉNFASIS?
+                ¿LAS ACTIVIDADES GUARDARON COHERENCIA CON EL ÉNFASIS?
               </td>
               <td class="border border-black p-1.5">
                 {{ reunion.programa?.evaluacion?.coherenciaEnfasis || 'Sin evaluar' }}
@@ -239,13 +239,6 @@ const mesesAgrupados = computed(() => {
         </table>
       </div>
       <!-- ======================================================== -->
-    </div>
-    <!-- ========================================== -->
-    <!-- EVALUACIÓN DE REUNIONES (MÓDULO C.2)       -->
-    <!-- ========================================== -->
-    <div class="page-break"></div>
-    <div class="mb-4 text-center">
-      <h2 class="text-xl font-bold uppercase">Evaluación del Ciclo de Programa</h2>
     </div>
   </div>
 </template>
