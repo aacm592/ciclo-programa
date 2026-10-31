@@ -208,7 +208,10 @@ select option:disabled {
         .bg-gray-100,
         .bg-gray-200
       ) {
-      background-color: rgba(0, 0, 0, 0.3) !important;
+      /* Añadimos una excepción para que respete el fondo azul del modal */
+      &:not(.dark\:bg-slate-900\/60):not(.dark\:bg-slate-900\/70) {
+        background-color: rgba(0, 0, 0, 0.3) !important;
+      }
     }
     & .bg-white {
       background-color: rgba(15, 23, 42, 0.5) !important;

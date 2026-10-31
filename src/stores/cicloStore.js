@@ -69,7 +69,7 @@ export const useCicloStore = defineStore('ciclo', () => {
 
   // Navegación (antes estaba declarada al final: causaba ReferenceError)
   const vistaActual = ref('landing')
-
+  const rama = ref('lobatos') //solo es un valor inicial, puede ser cambiado en tiempo de ejecución
   // 1. Encabezado
   const encabezado = ref(crearEncabezadoBase())
 
@@ -102,6 +102,7 @@ export const useCicloStore = defineStore('ciclo', () => {
     actividadesSeleccionadas.value =
       estado.actividadesSeleccionadas ?? actividadesSeleccionadas.value
     cronograma.value = estado.cronograma ?? cronograma.value
+    rama.value = estado.rama ?? 'lobatos'
   }
 
   const dirigentesGuardados = leerStorage(CLAVE_DIRIGENTES, [])
@@ -118,7 +119,8 @@ export const useCicloStore = defineStore('ciclo', () => {
       juegoDemocratico,
       actividadesSeleccionadas,
       vistaActual,
-      cronograma
+      cronograma,
+      rama
     ],
     () => {
       try {
@@ -131,7 +133,8 @@ export const useCicloStore = defineStore('ciclo', () => {
             juegoDemocratico: juegoDemocratico.value,
             actividadesSeleccionadas: actividadesSeleccionadas.value,
             vistaActual: vistaActual.value,
-            cronograma: cronograma.value
+            cronograma: cronograma.value,
+            rama: rama.value
           })
         )
       } catch (e) {
@@ -284,7 +287,8 @@ export const useCicloStore = defineStore('ciclo', () => {
   }
 
   // Botón "Crear programa ciclo"
-  const crearNuevoCiclo = () => {
+  const crearNuevoCiclo = (nuevaRama = 'lobatos') => {
+    rama.value = nuevaRama
     if (tieneDatosGuardados.value) {
       if (
         confirm(
@@ -308,6 +312,7 @@ export const useCicloStore = defineStore('ciclo', () => {
   })
 
   return {
+    rama,
     encabezado,
     diagnosticos,
     enfasis,

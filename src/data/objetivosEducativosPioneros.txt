@@ -1,0 +1,4 @@
+Corporalidad|media|ejemplo pioneros corporalidad media
+Corporalidad|media|Otro ejemplo pioneros corporalidad media
+Corporalidad|tardia|Ejemplo pioneros corporalidad tardia
+Creatividad|media|ejemplo pioneros creatividad media

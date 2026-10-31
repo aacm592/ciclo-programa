@@ -1,5 +1,9 @@
 <script setup>
-import { areasCrecimiento, objetivosPorArea } from '../../utils/areasCrecimiento.js'
+import { computed } from 'vue'
+import { useCicloStore } from '../../stores/cicloStore'
+import { areasCrecimiento, objetivosPorRama, RAMAS } from '../../utils/areasCrecimiento.js'
+
+const store = useCicloStore()
 
 const props = defineProps({
   objetivo: { type: Object, required: true },
@@ -10,6 +14,15 @@ const cambiarArea = () => {
   props.objetivo.media = ''
   props.objetivo.tardia = ''
 }
+
+const ramaActual = computed(() => store.rama || 'exploradores')
+const infoRama = computed(() => RAMAS.find(r => r.id === ramaActual.value) ?? RAMAS[0])
+const etapas = computed(() => infoRama.value.etapas)
+
+const objetivosDelArea = computed(() => {
+  if (!props.objetivo.area) return null
+  return objetivosPorRama[ramaActual.value]?.[props.objetivo.area] ?? null
+})
 </script>
 
 <template>
@@ -39,45 +52,18 @@ const cambiarArea = () => {
     </div>
 
     <!-- Selector Infancia Media -->
-    <div class="space-y-1.5">
-      <label class="text-[10px] font-bold text-jade uppercase">Infancia Media</label>
+    <div v-for="etapa in etapas" :key="etapa.clave" class="space-y-1.5">
+      <label class="text-[10px] font-bold text-jade uppercase">{{ etapa.etiqueta }}</label>
       <div class="relative">
         <select
-          v-model="objetivo.media"
-          :disabled="!objetivo.area || !objetivosPorArea[objetivo.area]"
+          v-model="objetivo[etapa.clave]"
+          :disabled="!objetivo.area || !objetivosDelArea"
           class="w-full bg-white/70 dark:bg-black/30 border border-gris-lavanda/30 dark:border-white/10 rounded-lg p-2 pr-8 text-xs text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-jade outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed appearance-none cursor-pointer"
         >
           <option value="" disabled>Selecciona objetivo</option>
           <option
-            v-for="(opt, idx) in objetivosPorArea[objetivo.area]?.media"
-            :key="'m' + idx"
-            :value="opt"
-            :title="opt"
-          >
-            {{ opt }}
-          </option>
-        </select>
-        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- Selector Infancia Tardía -->
-    <div class="space-y-1.5">
-      <label class="text-[10px] font-bold text-jade uppercase">Infancia Tardía</label>
-      <div class="relative">
-        <select
-          v-model="objetivo.tardia"
-          :disabled="!objetivo.area || !objetivosPorArea[objetivo.area]"
-          class="w-full bg-white/70 dark:bg-black/30 border border-gris-lavanda/30 dark:border-white/10 rounded-lg p-2 pr-8 text-xs text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-jade outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed appearance-none cursor-pointer"
-        >
-          <option value="" disabled>Selecciona objetivo</option>
-          <option
-            v-for="(opt, idx) in objetivosPorArea[objetivo.area]?.tardia"
-            :key="'t' + idx"
+            v-for="(opt, idx) in objetivosDelArea?.[etapa.clave] ?? []"
+            :key="etapa.clave + idx"
             :value="opt"
             :title="opt"
           >

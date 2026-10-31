@@ -1,0 +1,4 @@
+Corporalidad|media|ejemplo rover corporalidad media
+Corporalidad|media|Otro ejemplo rovers corporalidad media
+Corporalidad|tardia|Ejemplo rovers corporalidad tardia
+Creatividad|media|ejemplo rovers creatividad media
