@@ -15,7 +15,7 @@ const cambiarArea = () => {
   props.objetivo.tardia = ''
 }
 
-const ramaActual = computed(() => store.rama || 'exploradores')
+const ramaActual = computed(() => store.rama || 'lobatos')
 const infoRama = computed(() => RAMAS.find(r => r.id === ramaActual.value) ?? RAMAS[0])
 const etapas = computed(() => infoRama.value.etapas)
 

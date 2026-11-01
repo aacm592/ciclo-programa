@@ -6,6 +6,7 @@ import { RAMAS } from '../utils/areasCrecimiento'
 const store = useCicloStore()
 const mostrarModalRama = ref(false)
 const mostrarModalSinDirigentes = ref(false)
+const mostrarModalSinCiclo = ref(false)
 
 // Comprueba la existencia de dirigentes antes de iniciar el flujo
 const intentarCrearCiclo = () => {
@@ -19,9 +20,16 @@ const intentarCrearCiclo = () => {
 const intentarEditarCiclo = () => {
   if (store.dirigentes.length === 0) {
     mostrarModalSinDirigentes.value = true
+  } else if (!store.tieneCicloCreado) {
+    mostrarModalSinCiclo.value = true
   } else {
     store.vistaActual = 'moduloA'
   }
+}
+
+const crearCicloDesdeModal = () => {
+  mostrarModalSinCiclo.value = false
+  mostrarModalRama.value = true
 }
 
 const seleccionarRama = (idRama) => {
@@ -179,6 +187,44 @@ const estilosRama = {
         <button
           type="button"
           @click="mostrarModalSinDirigentes = false"
+          class="w-full text-center text-xs font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 py-1.5 cursor-pointer"
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Sin ciclo creado -->
+  <div
+    v-if="mostrarModalSinCiclo"
+    class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in"
+  >
+    <div class="bg-white/85 dark:bg-slate-900/70 backdrop-blur-xl border border-white dark:border-white/10 rounded-2xl shadow-2xl max-w-sm w-full p-6 space-y-4 text-center">
+      <div class="w-12 h-12 mx-auto rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center text-2xl font-bold">
+        !
+      </div>
+      
+      <h3 class="text-lg font-bold font-display text-morado dark:text-white">
+        Sin ciclo creado
+      </h3>
+      
+      <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+        Aún no tienes ningún ciclo de programa creado. Crea un nuevo ciclo para comenzar la planificación.
+      </p>
+
+      <div class="pt-2 flex flex-col gap-2">
+        <button
+          type="button"
+          @click="crearCicloDesdeModal"
+          class="w-full py-3 px-4 rounded-xl bg-jade hover:bg-jade/90 text-white font-bold text-sm shadow-md transition-all cursor-pointer"
+        >
+          Crear nuevo ciclo
+        </button>
+        
+        <button
+          type="button"
+          @click="mostrarModalSinCiclo = false"
           class="w-full text-center text-xs font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 py-1.5 cursor-pointer"
         >
           Cancelar

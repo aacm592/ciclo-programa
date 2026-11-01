@@ -4,6 +4,7 @@ import { computed, ref } from 'vue'
 const store = useCicloStore()
 
 const mostrarModalSinDirigentes = ref(false)
+const mostrarModalSinCiclo = ref(false)
 
 const navegarA = (idVista) => {
   // Permitir siempre ir a landing o a la gestión de dirigentes
@@ -15,14 +16,26 @@ const navegarA = (idVista) => {
   // Si intenta ir a algún módulo de planificación sin dirigentes registrados
   if (store.dirigentes.length === 0) {
     mostrarModalSinDirigentes.value = true
-  } else {
-    store.vistaActual = idVista
+    return
   }
+
+  // Si intenta acceder a planificación sin que haya un ciclo creado
+  if (!store.tieneCicloCreado) {
+    mostrarModalSinCiclo.value = true
+    return
+  }
+
+  store.vistaActual = idVista
 }
 
 const irADirigentes = () => {
   mostrarModalSinDirigentes.value = false
   store.vistaActual = 'dirigentes'
+}
+
+const irACrearCiclo = () => {
+  mostrarModalSinCiclo.value = false
+  store.vistaActual = 'landing'
 }
 
 // Recibimos el estado del modo oscuro desde App.vue
@@ -209,6 +222,44 @@ const activeIndex = computed(() => {
           <button
             type="button"
             @click="mostrarModalSinDirigentes = false"
+            class="w-full text-center text-xs font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 py-1.5 cursor-pointer"
+          >
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: SIN CICLO CREADO (DESDE NAVBAR) -->
+    <div
+      v-if="mostrarModalSinCiclo"
+      class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in"
+    >
+      <div class="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-white/80 dark:border-white/10 rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 text-center">
+        <div class="w-12 h-12 mx-auto rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center text-2xl font-bold">
+          !
+        </div>
+        
+        <h3 class="text-lg font-bold font-display text-morado dark:text-white">
+          Sin ciclo creado
+        </h3>
+        
+        <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+          Aún no tienes ningún ciclo de programa creado. Debes crear un nuevo ciclo antes de acceder a la planificación.
+        </p>
+
+        <div class="pt-2 flex flex-col gap-2">
+          <button
+            type="button"
+            @click="irACrearCiclo"
+            class="w-full py-3 px-4 rounded-xl bg-jade hover:bg-jade/90 text-white font-bold text-sm shadow-md transition-all cursor-pointer"
+          >
+            Ir a crear ciclo
+          </button>
+          
+          <button
+            type="button"
+            @click="mostrarModalSinCiclo = false"
             class="w-full text-center text-xs font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 py-1.5 cursor-pointer"
           >
             Cancelar

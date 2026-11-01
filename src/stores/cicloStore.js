@@ -21,7 +21,8 @@ export const useCicloStore = defineStore('ciclo', () => {
 
   // Estado reactivo
   const vistaActual = ref('landing')
-  const rama = ref(guardado.rama || RAMA_DEFAULT)
+  const ramaInicial = guardado.rama || (guardado.encabezado?.fechaInicio ? RAMA_DEFAULT : '')
+  const rama = ref(ramaInicial)
   const encabezado = ref({ ...crearEncabezadoBase(), ...(guardado.encabezado || {}) })
   const diagnosticos = ref(guardado.diagnosticos || crearFilasBase())
   const enfasis = ref(guardado.enfasis || crearFilasBase())
@@ -31,7 +32,7 @@ export const useCicloStore = defineStore('ciclo', () => {
   const errorGenerarSemanas = ref('')
   const dirigentes = ref(storage.leer(CLAVE_DIRIGENTES, []))
 
-  // Persistencia automática
+  // Persistencia automática (solo guarda si existe un ciclo creado o con datos)
   watch(
     [
       encabezado,
@@ -42,16 +43,19 @@ export const useCicloStore = defineStore('ciclo', () => {
       cronograma,
       rama
     ],
-    () =>
-      storage.escribir(CLAVE_ESTADO, {
-        encabezado: encabezado.value,
-        diagnosticos: diagnosticos.value,
-        enfasis: enfasis.value,
-        juegoDemocratico: juegoDemocratico.value,
-        actividadesSeleccionadas: actividadesSeleccionadas.value,
-        cronograma: cronograma.value,
-        rama: rama.value
-      }),
+    () => {
+      if (rama.value || encabezado.value.fechaInicio || encabezado.value.fechaFin) {
+        storage.escribir(CLAVE_ESTADO, {
+          encabezado: encabezado.value,
+          diagnosticos: diagnosticos.value,
+          enfasis: enfasis.value,
+          juegoDemocratico: juegoDemocratico.value,
+          actividadesSeleccionadas: actividadesSeleccionadas.value,
+          cronograma: cronograma.value,
+          rama: rama.value
+        })
+      }
+    },
     { deep: true }
   )
 
@@ -65,6 +69,7 @@ export const useCicloStore = defineStore('ciclo', () => {
   const tieneDatosGuardados = computed(() =>
     Boolean(encabezado.value.fechaInicio && encabezado.value.fechaFin)
   )
+  const tieneCicloCreado = computed(() => Boolean(rama.value || tieneDatosGuardados.value))
   const reunionesValidas = computed(() => cronograma.value.filter((s) => !s.cancelado))
 
   // Acciones: Colecciones
@@ -120,6 +125,7 @@ export const useCicloStore = defineStore('ciclo', () => {
       juegoDemocratico.value = ''
       actividadesSeleccionadas.value = ['', '', '']
       cronograma.value = []
+      rama.value = ''
       vistaActual.value = 'moduloA'
       errorGenerarSemanas.value = ''
       nextTick(() => storage.remover(CLAVE_ESTADO))
@@ -127,7 +133,6 @@ export const useCicloStore = defineStore('ciclo', () => {
   }
 
   const crearNuevoCiclo = (nuevaRama = RAMA_DEFAULT) => {
-    rama.value = nuevaRama
     if (tieneDatosGuardados.value) {
       if (
         confirm(
@@ -137,6 +142,7 @@ export const useCicloStore = defineStore('ciclo', () => {
         limpiarDatos(true)
       }
     }
+    rama.value = nuevaRama
     vistaActual.value = 'moduloA'
   }
 
@@ -157,6 +163,7 @@ export const useCicloStore = defineStore('ciclo', () => {
     errorGenerarSemanas,
     dirigentes,
     tieneDatosGuardados,
+    tieneCicloCreado,
     reunionesValidas,
     agregarDirigente,
     eliminarDirigente,
