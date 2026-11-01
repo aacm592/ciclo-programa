@@ -1,7 +1,29 @@
 <script setup>
 import { useCicloStore } from '../stores/cicloStore'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 const store = useCicloStore()
+
+const mostrarModalSinDirigentes = ref(false)
+
+const navegarA = (idVista) => {
+  // Permitir siempre ir a landing o a la gestión de dirigentes
+  if (idVista === 'landing' || idVista === 'dirigentes') {
+    store.vistaActual = idVista
+    return
+  }
+
+  // Si intenta ir a algún módulo de planificación sin dirigentes registrados
+  if (store.dirigentes.length === 0) {
+    mostrarModalSinDirigentes.value = true
+  } else {
+    store.vistaActual = idVista
+  }
+}
+
+const irADirigentes = () => {
+  mostrarModalSinDirigentes.value = false
+  store.vistaActual = 'dirigentes'
+}
 
 // Recibimos el estado del modo oscuro desde App.vue
 defineProps({
@@ -112,7 +134,7 @@ const activeIndex = computed(() => {
 
       <!-- Botón 1 -->
       <button
-        @click="store.vistaActual = 'moduloA'"
+        @click="navegarA('moduloA')"
         :class="[
           'relative z-10 px-5 py-2 rounded-full transition-colors duration-200 cursor-pointer text-center',
           activeIndex === 0
@@ -127,7 +149,7 @@ const activeIndex = computed(() => {
 
       <!-- Botón 2 -->
       <button
-        @click="store.vistaActual = 'evaluacion'"
+        @click="navegarA('evaluacion')"
         :class="[
           'relative z-10 px-5 py-2 rounded-full transition-colors duration-200 cursor-pointer text-center',
           activeIndex === 1
@@ -142,7 +164,7 @@ const activeIndex = computed(() => {
 
       <!-- Botón 3 -->
       <button
-        @click="store.vistaActual = 'dirigentes'"
+        @click="navegarA('dirigentes')"
         :class="[
           'relative z-10 px-5 py-2 rounded-full transition-colors duration-200 cursor-pointer text-center',
           activeIndex === 2
@@ -156,4 +178,43 @@ const activeIndex = computed(() => {
       </button>
     </div>
   </nav>
+  <!-- MODAL: SIN DIRIGENTES (DESDE NAVBAR) -->
+  <Teleport to="body">
+    <div
+      v-if="mostrarModalSinDirigentes"
+      class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in"
+    >
+      <div class="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-white/80 dark:border-white/10 rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 text-center">
+        <div class="w-12 h-12 mx-auto rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center text-2xl font-bold">
+          !
+        </div>
+        
+        <h3 class="text-lg font-bold font-display text-morado dark:text-white">
+          Sin dirigentes registrados
+        </h3>
+        
+        <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+          Aún no tienes dirigentes en tu lista, añádelos con el siguiente botón para poder acceder a los módulos de planificación.
+        </p>
+
+        <div class="pt-2 flex flex-col gap-2">
+          <button
+            type="button"
+            @click="irADirigentes"
+            class="w-full py-3 px-4 rounded-xl bg-jade hover:bg-jade/90 text-white font-bold text-sm shadow-md transition-all cursor-pointer"
+          >
+            Añadir dirigentes
+          </button>
+          
+          <button
+            type="button"
+            @click="mostrarModalSinDirigentes = false"
+            class="w-full text-center text-xs font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 py-1.5 cursor-pointer"
+          >
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </Teleport>
 </template>

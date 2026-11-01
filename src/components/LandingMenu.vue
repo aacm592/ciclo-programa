@@ -16,6 +16,14 @@ const intentarCrearCiclo = () => {
   }
 }
 
+const intentarEditarCiclo = () => {
+  if (store.dirigentes.length === 0) {
+    mostrarModalSinDirigentes.value = true
+  } else {
+    store.vistaActual = 'moduloA'
+  }
+}
+
 const seleccionarRama = (idRama) => {
   mostrarModalRama.value = false
   store.crearNuevoCiclo(idRama)
@@ -79,7 +87,7 @@ const estilosRama = {
         </button>
 
         <button
-          @click="store.vistaActual = 'moduloA'"
+          @click="intentarEditarCiclo"
           class="px-6 py-4 rounded-2xl bg-black/30 hover:bg-black/50 border border-white/10 transition-all text-sm md:text-base font-semibold text-gray-200 flex items-center justify-between cursor-pointer group"
         >
           Editar ciclo actual
