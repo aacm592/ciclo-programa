@@ -14,9 +14,18 @@ const store = useCicloStore()
     </div>
     <div class="space-y-4">
       <GlassInput v-model="store.encabezado.cicloNumero" type="number" label="Ciclo N°" />
-      <div class="grid grid-cols-2 gap-4">
-        <GlassInput v-model="store.encabezado.fechaInicio" type="date" label="Fecha Inicio" />
-        <GlassInput v-model="store.encabezado.fechaFin" type="date" label="Fecha Fin" />
+      <div>
+        <div class="grid grid-cols-2 gap-4">
+          <GlassInput v-model="store.encabezado.fechaInicio" type="date" label="Fecha Inicio" />
+          <GlassInput v-model="store.encabezado.fechaFin" type="date" label="Fecha Fin" />
+        </div>
+        <!-- Mensaje de error que aparece solo cuando falla la validación al presionar el botón -->
+        <p 
+          v-if="store.errorGenerarSemanas" 
+          class="text-xs font-semibold text-rose-500 mt-1.5 pl-1 animate-fade-in"
+        >
+          Debes llenar las fechas
+        </p>
       </div>
     </div>
   </div>

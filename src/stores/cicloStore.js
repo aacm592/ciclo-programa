@@ -144,6 +144,13 @@ export const useCicloStore = defineStore('ciclo', () => {
     { deep: true }
   )
 
+  // Limpia el error de la vista automáticamente en cuanto el usuario llena ambas fechas
+  watch([() => encabezado.value.fechaInicio, () => encabezado.value.fechaFin], ([inicio, fin]) => {
+    if (inicio && fin) {
+      errorGenerarSemanas.value = ''
+    }
+  })
+
   watch(
     dirigentes,
     (nuevoValor) => {
@@ -277,6 +284,8 @@ export const useCicloStore = defineStore('ciclo', () => {
       actividadesSeleccionadas.value = ['', '', '']
       cronograma.value = []
       vistaActual.value = 'moduloA'
+
+      errorGenerarSemanas.value = ''
 
       // Esperar a que el watch se ejecute (y guarde el estado vacío)
       // y recién entonces borrar la clave, para que el removeItem tenga efecto
