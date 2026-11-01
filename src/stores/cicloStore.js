@@ -3,20 +3,73 @@ import { ref, computed, watch, nextTick } from 'vue'
 
 const CLAVE_ESTADO = 'scout_estado_ciclo'
 const CLAVE_DIRIGENTES = 'scout_dirigentes'
+const RAMA_DEFAULT = 'lobatos'
+const MIN_FILAS_DIAGNOSTICO = 3
 
-// Lectura segura de localStorage: si el JSON está corrupto, lo descarta
+const MESES = Object.freeze([
+  'ENERO',
+  'FEBRERO',
+  'MARZO',
+  'ABRIL',
+  'MAYO',
+  'JUNIO',
+  'JULIO',
+  'AGOSTO',
+  'SEPTIEMBRE',
+  'OCTUBRE',
+  'NOVIEMBRE',
+  'DICIEMBRE'
+])
+
+/**
+ * Genera un identificador único seguro para filas y elementos.
+ * @returns {number|string}
+ */
+const generarId = () => Date.now() + Math.floor(Math.random() * 1000)
+
+/**
+ * Lee y parsea JSON desde localStorage con manejo seguro de excepciones.
+ * @template T
+ * @param {string} clave
+ * @param {T} porDefecto
+ * @returns {T}
+ */
 const leerStorage = (clave, porDefecto = null) => {
+  if (typeof window === 'undefined' || !window.localStorage) {
+    return porDefecto
+  }
   try {
     const crudo = localStorage.getItem(clave)
     return crudo ? JSON.parse(crudo) : porDefecto
-  } catch (e) {
-    console.error(`Error leyendo "${clave}" de localStorage`, e)
-    localStorage.removeItem(clave)
+  } catch (error) {
+    console.error(`[cicloStore] Error al leer "${clave}" de localStorage:`, error)
+    try {
+      localStorage.removeItem(clave)
+    } catch {
+      // ignorar error en removeItem
+    }
     return porDefecto
   }
 }
 
-const crearEncabezadoBase = () => ({
+/**
+ * Escribe un objeto como JSON en localStorage con manejo seguro de excepciones.
+ * @param {string} clave
+ * @param {unknown} valor
+ */
+const escribirStorage = (clave, valor) => {
+  if (typeof window === 'undefined' || !window.localStorage) return
+  try {
+    localStorage.setItem(clave, JSON.stringify(valor))
+  } catch (error) {
+    console.error(`[cicloStore] Error al guardar "${clave}" en localStorage:`, error)
+  }
+}
+
+/**
+ * Estructura inicial del encabezado general del ciclo.
+ */
+export const crearEncabezadoBase = () => ({
   distrito: 'Cochabamba',
   grupo: 'Kairos',
   tropa: '',
@@ -25,14 +78,29 @@ const crearEncabezadoBase = () => ({
   fechaFin: ''
 })
 
-const crearFilasBase = () => [
+/**
+ * Genera las 3 filas mínimas requeridas para diagnóstico o énfasis.
+ */
+export const crearFilasBase = () => [
   { id: 1, texto: '' },
   { id: 2, texto: '' },
   { id: 3, texto: '' }
 ]
 
-// Estructura base del Módulo C
-const crearProgramaBase = () => ({
+/**
+ * Estructura inicial para el cuestionario de evaluación de una reunión.
+ */
+export const crearEvaluacionBase = () => ({
+  cumplePrograma: '',
+  cumpleObjetivo: '',
+  contribuyeObjetivos: '',
+  coherenciaEnfasis: ''
+})
+
+/**
+ * Estructura base completa del Módulo C para una reunión individual.
+ */
+export const crearProgramaBase = () => ({
   responsables: [],
   responsablesOtro: '',
   objetivo: '',
@@ -40,7 +108,7 @@ const crearProgramaBase = () => ({
     {
       id: 1,
       hora: '15:00',
-      duracion: '15 min',
+      duracion: 15, // Número entero para compatibilidad con input type="number"
       actividad: 'Formación inicial',
       materiales: '',
       responsables: '',
@@ -53,56 +121,50 @@ const crearProgramaBase = () => ({
     { id: 2, area: '', media: '', tardia: '' },
     { id: 3, area: '', media: '', tardia: '' }
   ],
-  // NUEVO: Estructura de evaluación
-  evaluacion: {
-    cumplePrograma: '',
-    cumpleObjetivo: '',
-    contribuyeObjetivos: '',
-    coherenciaEnfasis: ''
-  }
+  evaluacion: crearEvaluacionBase()
 })
 
 export const useCicloStore = defineStore('ciclo', () => {
   // ---------------------------------------------------------------
-  // ESTADO (todo declarado ANTES de usarse)
+  // ESTADO REACTIVO
   // ---------------------------------------------------------------
-
-  // Navegación (antes estaba declarada al final: causaba ReferenceError)
   const vistaActual = ref('landing')
-  const rama = ref('lobatos') //solo es un valor inicial, puede ser cambiado en tiempo de ejecución
-  // 1. Encabezado
+  const rama = ref(RAMA_DEFAULT)
   const encabezado = ref(crearEncabezadoBase())
-
-  // 2. Diagnóstico y Énfasis (3 elementos mínimos para obligar su llenado)
   const diagnosticos = ref(crearFilasBase())
   const enfasis = ref(crearFilasBase())
-
-  // 3. Selección de Actividades
   const juegoDemocratico = ref('')
-  const actividadesSeleccionadas = ref(['', '', '']) // Exactamente 3 actividades
-
-  // Módulo B: cronograma de sábados
+  const actividadesSeleccionadas = ref(['', '', ''])
   const cronograma = ref([])
-
-  // Último error de generarSemanas (el componente decide cómo mostrarlo)
   const errorGenerarSemanas = ref('')
-
-  // Lista de dirigentes
   const dirigentes = ref([])
 
   // ---------------------------------------------------------------
-  // CARGA DESDE LOCALSTORAGE
+  // INICIALIZACIÓN DESDE LOCALSTORAGE
   // ---------------------------------------------------------------
-  const estado = leerStorage(CLAVE_ESTADO)
-  if (estado) {
-    encabezado.value = { ...encabezado.value, ...(estado.encabezado ?? {}) }
-    diagnosticos.value = estado.diagnosticos ?? diagnosticos.value
-    enfasis.value = estado.enfasis ?? enfasis.value
-    juegoDemocratico.value = estado.juegoDemocratico ?? juegoDemocratico.value
-    actividadesSeleccionadas.value =
-      estado.actividadesSeleccionadas ?? actividadesSeleccionadas.value
-    cronograma.value = estado.cronograma ?? cronograma.value
-    rama.value = estado.rama ?? 'lobatos'
+  const estadoGuardado = leerStorage(CLAVE_ESTADO)
+  if (estadoGuardado) {
+    if (estadoGuardado.encabezado) {
+      encabezado.value = { ...crearEncabezadoBase(), ...estadoGuardado.encabezado }
+    }
+    if (Array.isArray(estadoGuardado.diagnosticos)) {
+      diagnosticos.value = estadoGuardado.diagnosticos
+    }
+    if (Array.isArray(estadoGuardado.enfasis)) {
+      enfasis.value = estadoGuardado.enfasis
+    }
+    if (typeof estadoGuardado.juegoDemocratico === 'string') {
+      juegoDemocratico.value = estadoGuardado.juegoDemocratico
+    }
+    if (Array.isArray(estadoGuardado.actividadesSeleccionadas)) {
+      actividadesSeleccionadas.value = estadoGuardado.actividadesSeleccionadas
+    }
+    if (Array.isArray(estadoGuardado.cronograma)) {
+      cronograma.value = estadoGuardado.cronograma
+    }
+    if (estadoGuardado.rama) {
+      rama.value = estadoGuardado.rama
+    }
   }
 
   const dirigentesGuardados = leerStorage(CLAVE_DIRIGENTES, [])
@@ -118,73 +180,101 @@ export const useCicloStore = defineStore('ciclo', () => {
       enfasis,
       juegoDemocratico,
       actividadesSeleccionadas,
-      vistaActual,
       cronograma,
       rama
     ],
     () => {
-      try {
-        localStorage.setItem(
-          CLAVE_ESTADO,
-          JSON.stringify({
-            encabezado: encabezado.value,
-            diagnosticos: diagnosticos.value,
-            enfasis: enfasis.value,
-            juegoDemocratico: juegoDemocratico.value,
-            actividadesSeleccionadas: actividadesSeleccionadas.value,
-            vistaActual: vistaActual.value,
-            cronograma: cronograma.value,
-            rama: rama.value
-          })
-        )
-      } catch (e) {
-        console.error('No se pudo guardar el estado del ciclo', e)
-      }
+      escribirStorage(CLAVE_ESTADO, {
+        encabezado: encabezado.value,
+        diagnosticos: diagnosticos.value,
+        enfasis: enfasis.value,
+        juegoDemocratico: juegoDemocratico.value,
+        actividadesSeleccionadas: actividadesSeleccionadas.value,
+        cronograma: cronograma.value,
+        rama: rama.value
+      })
     },
     { deep: true }
   )
 
-  // Limpia el error de la vista automáticamente en cuanto el usuario llena ambas fechas
+  watch(
+    dirigentes,
+    (nuevosDirigentes) => {
+      escribirStorage(CLAVE_DIRIGENTES, nuevosDirigentes)
+    },
+    { deep: true }
+  )
+
+  // Limpiar mensaje de error en cuanto el usuario define ambas fechas
   watch([() => encabezado.value.fechaInicio, () => encabezado.value.fechaFin], ([inicio, fin]) => {
     if (inicio && fin) {
       errorGenerarSemanas.value = ''
     }
   })
 
-  watch(
-    dirigentes,
-    (nuevoValor) => {
-      try {
-        localStorage.setItem(CLAVE_DIRIGENTES, JSON.stringify(nuevoValor))
-      } catch (e) {
-        console.error('No se pudo guardar la lista de dirigentes', e)
-      }
-    },
-    { deep: true }
-  )
+  // ---------------------------------------------------------------
+  // GETTERS COMPUTADOS
+  // ---------------------------------------------------------------
+  const tieneDatosGuardados = computed(() => {
+    return Boolean(encabezado.value.fechaInicio && encabezado.value.fechaFin)
+  })
+
+  // Sábados activos (no cancelados) para el Módulo C y Evaluación
+  const reunionesValidas = computed(() => {
+    return cronograma.value.filter((s) => !s.cancelado)
+  })
 
   // ---------------------------------------------------------------
-  // DIAGNÓSTICOS Y ÉNFASIS
+  // ACCIONES: DIRIGENTES
   // ---------------------------------------------------------------
-  const agregarDiagnostico = () => diagnosticos.value.push({ id: Date.now(), texto: '' })
+  const agregarDirigente = (nombre) => {
+    const nombreLimpio = typeof nombre === 'string' ? nombre.trim() : ''
+    if (nombreLimpio && !dirigentes.value.includes(nombreLimpio)) {
+      dirigentes.value.push(nombreLimpio)
+      return true
+    }
+    return false
+  }
+
+  const eliminarDirigente = (index) => {
+    if (index >= 0 && index < dirigentes.value.length) {
+      dirigentes.value.splice(index, 1)
+      return true
+    }
+    return false
+  }
+
+  // ---------------------------------------------------------------
+  // ACCIONES: DIAGNÓSTICOS Y ÉNFASIS
+  // ---------------------------------------------------------------
+  const agregarDiagnostico = () => {
+    diagnosticos.value.push({ id: generarId(), texto: '' })
+  }
+
   const eliminarDiagnostico = (id) => {
-    if (diagnosticos.value.length > 3) {
+    if (diagnosticos.value.length > MIN_FILAS_DIAGNOSTICO) {
       diagnosticos.value = diagnosticos.value.filter((d) => d.id !== id)
     }
   }
 
-  const agregarEnfasis = () => enfasis.value.push({ id: Date.now(), texto: '' })
+  const agregarEnfasis = () => {
+    enfasis.value.push({ id: generarId(), texto: '' })
+  }
+
   const eliminarEnfasis = (id) => {
-    if (enfasis.value.length > 3) {
+    if (enfasis.value.length > MIN_FILAS_DIAGNOSTICO) {
       enfasis.value = enfasis.value.filter((e) => e.id !== id)
     }
   }
 
   // ---------------------------------------------------------------
-  // MÓDULO B: generar sábados
+  // ACCIONES: CRONOGRAMA (MÓDULO B)
   // ---------------------------------------------------------------
-  // Devuelve true si tuvo éxito. Si falla devuelve false y deja el
-  // mensaje en `errorGenerarSemanas` para que el componente lo muestre.
+  /**
+   * Genera el arreglo de sábados comprendidos entre fechaInicio y fechaFin.
+   * Conserva el trabajo previo si el usuario edita fechas o vuelve al módulo.
+   * @returns {boolean} true si se generó correctamente, false si falló la validación
+   */
   const generarSemanas = () => {
     errorGenerarSemanas.value = ''
 
@@ -193,43 +283,37 @@ export const useCicloStore = defineStore('ciclo', () => {
       return false
     }
 
-    // 'T12:00:00' evita desfases de zona horaria
     const fechaActual = new Date(encabezado.value.fechaInicio + 'T12:00:00')
     const fechaFinal = new Date(encabezado.value.fechaFin + 'T12:00:00')
 
-    const meses = [
-      'ENERO',
-      'FEBRERO',
-      'MARZO',
-      'ABRIL',
-      'MAYO',
-      'JUNIO',
-      'JULIO',
-      'AGOSTO',
-      'SEPTIEMBRE',
-      'OCTUBRE',
-      'NOVIEMBRE',
-      'DICIEMBRE'
-    ]
+    if (isNaN(fechaActual.getTime()) || isNaN(fechaFinal.getTime())) {
+      errorGenerarSemanas.value = 'Una de las fechas ingresadas no es válida.'
+      return false
+    }
+
+    if (fechaActual > fechaFinal) {
+      errorGenerarSemanas.value = 'La fecha de fin debe ser posterior a la fecha de inicio.'
+      return false
+    }
+
     const nuevosSabados = []
 
-    // Avanzar hasta el primer sábado (día 6 en JS)
+    // Avanzar hasta el primer sábado (día 6 en getDay())
     while (fechaActual.getDay() !== 6 && fechaActual <= fechaFinal) {
       fechaActual.setDate(fechaActual.getDate() + 1)
     }
 
-    // Recorrer sumando 7 días hasta la fecha de fin
+    // Iterar de sábado en sábado sumando 7 días
     while (fechaActual <= fechaFinal) {
       const dia = fechaActual.getDate()
       const mes = fechaActual.getMonth() + 1
       const anio = fechaActual.getFullYear().toString().slice(-2)
 
       const fechaFormateada = `${dia}-${mes}-${anio}`
-      const nombreMes = meses[fechaActual.getMonth()]
+      const nombreMes = MESES[fechaActual.getMonth()]
 
-      // Conservar lo escrito si el usuario va atrás y adelante
+      // Buscar si ya existía información para este sábado para conservarla
       const existente = cronograma.value.find((s) => s.fecha === fechaFormateada)
-
       const programaBase = crearProgramaBase()
 
       nuevosSabados.push({
@@ -238,14 +322,22 @@ export const useCicloStore = defineStore('ciclo', () => {
         actividad: existente?.actividad ?? '',
         cancelado: existente?.cancelado ?? false,
         motivoCancelacion: existente?.motivoCancelacion ?? '',
-        // Fusionar con la base para tolerar datos guardados de versiones anteriores
         programa: {
           ...programaBase,
-          ...(existente?.programa ?? {})
+          ...(existente?.programa ?? {}),
+          evaluacion: {
+            ...programaBase.evaluacion,
+            ...(existente?.programa?.evaluacion ?? {})
+          }
         }
       })
 
       fechaActual.setDate(fechaActual.getDate() + 7)
+    }
+
+    if (nuevosSabados.length === 0) {
+      errorGenerarSemanas.value = 'El rango de fechas seleccionado no contiene ningún sábado.'
+      return false
     }
 
     cronograma.value = nuevosSabados
@@ -254,29 +346,38 @@ export const useCicloStore = defineStore('ciclo', () => {
   }
 
   // ---------------------------------------------------------------
-  // NAVEGACIÓN
+  // ACCIONES: NAVEGACIÓN
   // ---------------------------------------------------------------
+  const irAModuloA = () => {
+    vistaActual.value = 'moduloA'
+  }
   const volverModuloA = () => {
     vistaActual.value = 'moduloA'
   }
-
+  const irAModuloB = () => {
+    vistaActual.value = 'moduloB'
+  }
   const irAModuloC = () => {
     vistaActual.value = 'moduloC'
   }
+  const irAEvaluacion = () => {
+    vistaActual.value = 'evaluacion'
+  }
+  const irADirigentes = () => {
+    vistaActual.value = 'dirigentes'
+  }
+  const irALanding = () => {
+    vistaActual.value = 'landing'
+  }
 
   // ---------------------------------------------------------------
-  // CICLO EN PROGRESO / LIMPIEZA
+  // ACCIONES: CICLO Y LIMPIEZA
   // ---------------------------------------------------------------
-  const tieneDatosGuardados = computed(() => {
-    return encabezado.value.fechaInicio !== '' && encabezado.value.fechaFin !== ''
-  })
-
   const limpiarDatos = (forzar = false) => {
     if (
       forzar ||
       confirm('¿Estás seguro de borrar todos los datos? Esto reiniciará el ciclo desde cero.')
     ) {
-      // Restaurar valores por defecto (manteniendo distrito y grupo de Kairos)
       encabezado.value = crearEncabezadoBase()
       diagnosticos.value = crearFilasBase()
       enfasis.value = crearFilasBase()
@@ -284,27 +385,26 @@ export const useCicloStore = defineStore('ciclo', () => {
       actividadesSeleccionadas.value = ['', '', '']
       cronograma.value = []
       vistaActual.value = 'moduloA'
-
       errorGenerarSemanas.value = ''
 
-      // Esperar a que el watch se ejecute (y guarde el estado vacío)
-      // y recién entonces borrar la clave, para que el removeItem tenga efecto
       nextTick(() => {
-        localStorage.removeItem(CLAVE_ESTADO)
+        try {
+          localStorage.removeItem(CLAVE_ESTADO)
+        } catch (error) {
+          console.error('[cicloStore] Error al remover estado de localStorage:', error)
+        }
       })
     }
   }
 
-  // Botón "Crear programa ciclo"
-  const crearNuevoCiclo = (nuevaRama = 'lobatos') => {
+  const crearNuevoCiclo = (nuevaRama = RAMA_DEFAULT) => {
     rama.value = nuevaRama
     if (tieneDatosGuardados.value) {
-      if (
-        confirm(
-          `Hay datos guardados de un ciclo de ${encabezado.value.fechaInicio} a ${encabezado.value.fechaFin}. ¿Borrar y crear uno nuevo?`
-        )
-      ) {
-        limpiarDatos(true) // Sin doble confirmación
+      const confirmacion = confirm(
+        `Hay datos guardados de un ciclo de ${encabezado.value.fechaInicio} a ${encabezado.value.fechaFin}. ¿Borrar y crear uno nuevo?`
+      )
+      if (confirmacion) {
+        limpiarDatos(true)
         vistaActual.value = 'moduloA'
       }
     } else {
@@ -312,35 +412,41 @@ export const useCicloStore = defineStore('ciclo', () => {
     }
   }
 
-  // ---------------------------------------------------------------
-  // MÓDULO C
-  // ---------------------------------------------------------------
-  // Filtra los sábados cancelados. El index + 1 será el "N° de Reunión"
-  const reunionesValidas = computed(() => {
-    return cronograma.value.filter((s) => !s.cancelado)
-  })
-
   return {
+    // Estado
     rama,
     encabezado,
     diagnosticos,
     enfasis,
-    agregarDiagnostico,
-    eliminarDiagnostico,
-    agregarEnfasis,
-    eliminarEnfasis,
     juegoDemocratico,
     actividadesSeleccionadas,
     vistaActual,
     cronograma,
-    generarSemanas,
     errorGenerarSemanas,
-    volverModuloA,
-    limpiarDatos,
-    reunionesValidas,
-    irAModuloC,
     dirigentes,
+
+    // Getters
     tieneDatosGuardados,
-    crearNuevoCiclo
+    reunionesValidas,
+
+    // Acciones de datos
+    agregarDirigente,
+    eliminarDirigente,
+    agregarDiagnostico,
+    eliminarDiagnostico,
+    agregarEnfasis,
+    eliminarEnfasis,
+    generarSemanas,
+    limpiarDatos,
+    crearNuevoCiclo,
+
+    // Acciones de navegación
+    irAModuloA,
+    volverModuloA,
+    irAModuloB,
+    irAModuloC,
+    irAEvaluacion,
+    irADirigentes,
+    irALanding
   }
 })

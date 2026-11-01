@@ -3,7 +3,11 @@ import exploradoresRaw from '../data/objetivosEducativosExploradores.txt?raw'
 import pionerosRaw from '../data/objetivosEducativosPioneros.txt?raw'
 import roversRaw from '../data/objetivosEducativosRovers.txt?raw'
 
-export const RAMAS = [
+/**
+ * Ramas del Movimiento Scout disponibles en el sistema con sus respectivas etapas de desarrollo.
+ * @readonly
+ */
+export const RAMAS = Object.freeze([
   {
     id: 'lobatos',
     nombre: 'Lobatos',
@@ -36,53 +40,84 @@ export const RAMAS = [
       { clave: 'tardia', etiqueta: 'Encuentro' }
     ]
   }
-]
+])
 
-export const areasCrecimiento = [
+/**
+ * Las seis áreas de crecimiento scout.
+ * @readonly
+ */
+export const areasCrecimiento = Object.freeze([
   'Corporalidad',
   'Creatividad',
   'Carácter',
   'Afectividad',
   'Sociabilidad',
   'Espiritualidad'
-]
+])
 
-// Estructura base vacía por cada área
-const crearEstructuraAreaVacia = () => {
+/**
+ * Crea una estructura base vacía por cada área de crecimiento.
+ * @returns {Record<string, { media: string[], tardia: string[] }>}
+ */
+export const crearEstructuraAreaVacia = () => {
   const estructura = {}
-  areasCrecimiento.forEach((area) => {
+  for (const area of areasCrecimiento) {
     estructura[area] = { media: [], tardia: [] }
-  })
+  }
   return estructura
 }
 
-// Función para parsear texto plano a estructura de objetos
-const parsearTextoAObjetivos = (textoPlano) => {
+/**
+ * Parsea un archivo de texto plano con formato "Área | Etapa | Objetivo"
+ * a una estructura de datos categorizada por área y etapa.
+ *
+ * @param {string} [textoPlano=''] Contenido crudo del archivo de texto
+ * @returns {Record<string, { media: string[], tardia: string[] }>}
+ */
+export const parsearTextoAObjetivos = (textoPlano = '') => {
   const areaObj = crearEstructuraAreaVacia()
+  if (!textoPlano || typeof textoPlano !== 'string') {
+    return areaObj
+  }
+
   const lineas = textoPlano.split(/\r?\n/)
 
   for (const linea of lineas) {
     const lineaLimpia = linea.trim()
     if (!lineaLimpia || lineaLimpia.startsWith('#')) continue
 
-    const [area, etapa, ...resto] = lineaLimpia.split('|')
+    const partes = lineaLimpia.split('|')
+    if (partes.length < 3) continue
+
+    const [areaRaw, etapaRaw, ...resto] = partes
     const objetivo = resto.join('|').trim()
+    const area = areaRaw?.trim()
+    const etapa = etapaRaw?.trim().toLowerCase()
 
-    const a = area?.trim()
-    const e = etapa?.trim().toLowerCase()
-
-    if (areaObj[a]?.[e]) {
-      areaObj[a][e].push(objetivo)
+    if (area && areaObj[area] && (etapa === 'media' || etapa === 'tardia') && objetivo) {
+      areaObj[area][etapa].push(objetivo)
     }
   }
 
   return areaObj
 }
 
-// Consolidar las 4 ramas utilizando sus respectivos archivos de texto
-export const objetivosPorRama = {
+/**
+ * Busca los metadatos de una rama por su ID único.
+ * @param {string} id - Identificador de la rama ('lobatos', 'exploradores', etc.)
+ * @returns {object} Metadatos de la rama encontrada o Lobatos por defecto
+ */
+export const obtenerRamaPorId = (id) => {
+  return RAMAS.find((r) => r.id === id) ?? RAMAS[0]
+}
+
+/**
+ * Consolidación de objetivos educativos para las 4 ramas del escultismo.
+ * @readonly
+ */
+export const objetivosPorRama = Object.freeze({
   lobatos: parsearTextoAObjetivos(lobatosRaw),
   exploradores: parsearTextoAObjetivos(exploradoresRaw),
   pioneros: parsearTextoAObjetivos(pionerosRaw),
   rovers: parsearTextoAObjetivos(roversRaw)
-}
+})
