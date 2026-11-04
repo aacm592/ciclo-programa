@@ -1,6 +1,5 @@
 <script setup>
 import { useCicloStore } from '../../stores/cicloStore'
-import IconButton from '../common/IconButton.vue'
 import IconTrash from '../common/IconTrash.vue'
 
 const props = defineProps({
@@ -38,7 +37,7 @@ const agregarFila = () => {
   props.horario.push({
     id: Date.now(),
     hora: proximaHora,
-    duracion: '',
+    duracion: 15,
     actividad: '',
     materiales: '',
     responsables: '',
@@ -57,11 +56,10 @@ const eliminarFila = (id) => {
 
 <template>
   <div>
-    <div class="flex justify-between items-center mb-3">
+    <div class="mb-3">
       <h4 class="font-display font-bold text-morado dark:text-slate-200 tracking-wide">
         CRONOGRAMA DE ACTIVIDADES
       </h4>
-      <IconButton action="add" @click="agregarFila" />
     </div>
 
     <div class="overflow-x-auto rounded-xl border border-gris-lavanda/20 dark:border-white/10 bg-white/30 dark:bg-slate-900/40 shadow-sm">
@@ -169,6 +167,18 @@ const eliminarFila = (id) => {
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Botón para añadir fila debajo de la tabla -->
+    <div class="mt-3 flex items-center justify-start">
+      <button
+        type="button"
+        @click="agregarFila"
+        class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-jade dark:text-emerald-400 bg-verde-suave/40 dark:bg-emerald-500/10 hover:bg-verde-suave/80 dark:hover:bg-emerald-500/20 border border-jade/30 dark:border-emerald-500/30 transition-all cursor-pointer shadow-sm active:scale-95"
+      >
+        <span class="text-base leading-none font-extrabold">+</span>
+        Añadir otra fila
+      </button>
     </div>
   </div>
 </template>
