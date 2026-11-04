@@ -1,6 +1,7 @@
 <script setup>
 import { useCicloStore } from '../../stores/cicloStore'
 import IconButton from '../common/IconButton.vue'
+import IconTrash from '../common/IconTrash.vue'
 
 const props = defineProps({
   horario: { type: Array, required: true }
@@ -128,10 +129,10 @@ const eliminarFila = (id) => {
                 <button
                   type="button"
                   @click="fila.isOtro = false; fila.responsables = ''"
-                  class="text-rose-500 hover:text-rose-700 font-bold px-1 outline-none"
+                  class="text-rose-500 hover:text-rose-700 p-1 rounded hover:bg-rose-500/10 transition-colors outline-none cursor-pointer inline-flex items-center justify-center flex-shrink-0"
                   title="Volver a la lista"
                 >
-                  ✕
+                  <IconTrash size="w-3.5 h-3.5" />
                 </button>
               </div>
               <select
@@ -159,9 +160,10 @@ const eliminarFila = (id) => {
               <button
                 type="button"
                 @click="eliminarFila(fila.id)"
-                class="text-rose-500 hover:text-rose-700 font-bold px-2 cursor-pointer outline-none"
+                class="text-rose-500 hover:text-rose-700 p-1 rounded hover:bg-rose-500/10 transition-colors cursor-pointer outline-none inline-flex items-center justify-center"
+                title="Eliminar fila"
               >
-                ✕
+                <IconTrash />
               </button>
             </td>
           </tr>

@@ -20,8 +20,8 @@ export const RAMAS = Object.freeze([
     id: 'exploradores',
     nombre: 'Exploradores',
     etapas: [
-      { clave: 'media', etiqueta: 'Pista' },
-      { clave: 'tardia', etiqueta: 'Senda' }
+      { clave: 'media', etiqueta: 'Pista-Senda' },
+      { clave: 'tardia', etiqueta: 'Rumbo-Travesía' }
     ]
   },
   {

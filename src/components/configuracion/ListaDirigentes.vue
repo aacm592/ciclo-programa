@@ -4,6 +4,7 @@ import { useCicloStore } from '../../stores/cicloStore'
 import GlassCard from '../common/GlassCard.vue'
 import GlassInput from '../common/GlassInput.vue'
 import GlassButton from '../common/GlassButton.vue'
+import IconTrash from '../common/IconTrash.vue'
 
 const store = useCicloStore()
 const nuevoDirigente = ref('')
@@ -46,10 +47,12 @@ const eliminarDirigente = (index) => {
         >
           <span class="font-bold text-morado">{{ dirigente }}</span>
           <button
+            type="button"
             @click="eliminarDirigente(index)"
-            class="text-rose-500 hover:text-rose-700 font-bold px-2 cursor-pointer"
+            class="text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-500/10 transition-colors cursor-pointer"
+            title="Eliminar dirigente"
           >
-            ✕
+            <IconTrash />
           </button>
         </li>
       </ul>
